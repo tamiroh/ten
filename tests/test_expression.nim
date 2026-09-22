@@ -3,30 +3,29 @@ import ../src/ten/[calculator, expression]
 
 suite "Arithmetic expressions":
   test "literals are independent of puzzle rules":
-    let nodes = @[literal(42), literal(-7)]
-    check nodes[0].value == 42 // 1
-    check nodes.toString(0) == "42"
-    check nodes.toString(1) == "-7"
+    check literal(42).toString() == "42"
+    check literal(-7).toString() == "-7"
 
-  test "binary nodes retain exact values and operand order":
-    var nodes = @[literal(1), literal(3)]
-    for operator in ['+', '-', '*', '/']:
-      nodes.add(nodes.combine(0, 1, operator))
-      check nodes[^1].value == evaluate(nodes.toString(nodes.high))
-    check nodes[^1].value == 1 // 3
-    check nodes.toString(nodes.high) == "(1/3)"
+  test "binary expressions preserve operand order":
+    for operation in [(opAdd, "(1+3)"), (opSubtract, "(1-3)"),
+        (opMultiply, "(1*3)"), (opDivide, "(1/3)")]:
+      check combine(literal(1), literal(3), operation[0]).toString() == operation[1]
 
-  test "nested expressions can share child nodes":
-    var nodes = @[literal(1), literal(3)]
-    nodes.add(nodes.combine(0, 1, '/'))
-    nodes.add(nodes.combine(2, 2, '+'))
-    check nodes[3].value == 2 // 3
-    check nodes.toString(3) == "((1/3)+(1/3))"
-    check nodes[2].value == 1 // 3
+  test "nested expressions can share child expressions":
+    let fraction = combine(literal(1), literal(3), opDivide)
+    let sum = combine(fraction, fraction, opAdd)
+    check sum.toString() == "((1/3)+(1/3))"
+    check evaluate(sum.toString()) == 2 // 3
+    check fraction.toString() == "(1/3)"
 
-  test "invalid operations are rejected":
-    let nodes = @[literal(1), literal(0)]
+  test "construction represents expressions without evaluating them":
+    let division = combine(literal(1), literal(0), opDivide)
+    check division.toString() == "(1/0)"
     expect ValueError:
-      discard nodes.combine(0, 1, '/')
+      discard evaluate(division.toString())
+
+  test "missing operands are rejected":
     expect ValueError:
-      discard nodes.combine(0, 1, '^')
+      discard combine(nil, literal(1), opAdd)
+    expect ValueError:
+      discard combine(literal(1), nil, opAdd)

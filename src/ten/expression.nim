@@ -1,44 +1,40 @@
-import std/rationals
+type
+  Operator* = enum
+    opAdd = "+"
+    opSubtract = "-"
+    opMultiply = "*"
+    opDivide = "/"
 
-type Expression* = object
-  ## A node with a cached value. Children index the same node sequence.
-  evaluated: Rational[int]
-  operator: char
-  left, right: int
+  ExpressionKind = enum
+    literalExpression, binaryExpression
+
+  Expression* = ref object
+    case kind: ExpressionKind
+    of literalExpression:
+      number: int
+    of binaryExpression:
+      operator: Operator
+      left, right: Expression
 
 func literal*(number: int): Expression =
-  Expression(evaluated: number // 1)
+  Expression(kind: literalExpression, number: number)
 
-func value*(expression: Expression): Rational[int] =
-  expression.evaluated
+func combine*(left, right: Expression, operator: Operator): Expression =
+  if left == nil or right == nil:
+    raise newException(ValueError, "Both operands are required.")
+  return Expression(kind: binaryExpression, operator: operator, left: left, right: right)
 
-func combine*(nodes: openArray[Expression], left, right: int,
-    operator: char): Expression =
-  ## Build a binary node referring to existing children in nodes.
-  case operator
-  of '+': result.evaluated = nodes[left].value + nodes[right].value
-  of '-': result.evaluated = nodes[left].value - nodes[right].value
-  of '*': result.evaluated = nodes[left].value * nodes[right].value
-  of '/':
-    if nodes[right].value.num == 0:
-      raise newException(ValueError, "Cannot divide by zero.")
-    result.evaluated = nodes[left].value / nodes[right].value
-  else:
-    raise newException(ValueError, "Unknown operator.")
-  result.operator = operator
-  result.left = left
-  result.right = right
+func appendExpression(expression: Expression, text: var string) =
+  case expression.kind
+  of literalExpression:
+    text.add($expression.number)
+  of binaryExpression:
+    text.add('(')
+    expression.left.appendExpression(text)
+    text.add($expression.operator)
+    expression.right.appendExpression(text)
+    text.add(')')
 
-func appendExpression(nodes: openArray[Expression], index: int, text: var string) =
-  if nodes[index].operator == '\0':
-    text.add($nodes[index].value.num)
-    return
-  text.add('(')
-  nodes.appendExpression(nodes[index].left, text)
-  text.add(nodes[index].operator)
-  nodes.appendExpression(nodes[index].right, text)
-  text.add(')')
-
-func toString*(nodes: openArray[Expression], root: int): string =
-  ## Render a node and its children as a fully parenthesized expression.
-  nodes.appendExpression(root, result)
+func toString*(expression: Expression): string =
+  ## Render the recursive expression as a fully parenthesized string.
+  expression.appendExpression(result)
