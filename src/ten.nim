@@ -1,11 +1,16 @@
 import std/[random, rationals, strutils]
 import ten/[answer, prompt, solver]
 
-proc newPuzzle(): array[4, int] =
+type Puzzle = object
+  digits: array[4, int]
+  solutions: seq[string]
+
+proc newPuzzle(): Puzzle =
   while true:
-    for digit in result.mitems:
+    for digit in result.digits.mitems:
       digit = rand(9)
-    if findSolutions(result).len > 0:
+    result.solutions = findSolutions(result.digits)
+    if result.solutions.len > 0:
       return
 
 proc showPuzzle(digits: array[4, int]) =
@@ -17,8 +22,8 @@ proc main() =
   echo "Use all four digits exactly once with + - * / and parentheses to make 10."
   echo "No concatenation. Every puzzle has a solution."
   echo "answers: show all solutions / next: skip / quit: exit"
-  var digits = newPuzzle()
-  showPuzzle(digits)
+  var puzzle = newPuzzle()
+  showPuzzle(puzzle.digits)
   while true:
     var line: string
     if not readPrompt(line):
@@ -28,22 +33,21 @@ proc main() =
     of "quit", "q":
       break
     of "next", "n":
-      digits = newPuzzle()
-      showPuzzle(digits)
+      puzzle = newPuzzle()
+      showPuzzle(puzzle.digits)
     of "answers", "a":
-      let solutions = findSolutions(digits)
-      echo "Solutions: ", solutions.len
-      for solution in solutions:
+      echo "Solutions: ", puzzle.solutions.len
+      for solution in puzzle.solutions:
         echo solution, " = 10"
     of "":
       discard
     else:
       try:
-        let value = evaluateAnswer(line, digits)
+        let value = evaluateAnswer(line, puzzle.digits)
         if value == 10 // 1:
           echo "Correct!"
-          digits = newPuzzle()
-          showPuzzle(digits)
+          puzzle = newPuzzle()
+          showPuzzle(puzzle.digits)
         else:
           echo "Result: ", (if value.den == 1: $value.num else: $value), ". Try again!"
       except ValueError as error:
