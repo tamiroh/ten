@@ -1,9 +1,12 @@
 import std/[random, rationals, strutils]
-import ten/[answer, prompt]
+import ten/[answer, prompt, solver]
 
 proc newPuzzle(): array[4, int] =
-  for digit in result.mitems:
-    digit = rand(9)
+  while true:
+    for digit in result.mitems:
+      digit = rand(9)
+    if findSolutions(result).len > 0:
+      return
 
 proc showPuzzle(digits: array[4, int]) =
   echo "\nDigits: ", digits.join(" ")
@@ -12,7 +15,8 @@ proc main() =
   randomize()
   echo "10 puzzle"
   echo "Use all four digits exactly once with + - * / and parentheses to make 10."
-  echo "No concatenation. Some puzzles have no solution. next: skip / quit: exit"
+  echo "No concatenation. Every puzzle has a solution."
+  echo "answers: show all solutions / next: skip / quit: exit"
   var digits = newPuzzle()
   showPuzzle(digits)
   while true:
@@ -26,6 +30,11 @@ proc main() =
     of "next", "n":
       digits = newPuzzle()
       showPuzzle(digits)
+    of "answers", "a":
+      let solutions = findSolutions(digits)
+      echo "Solutions: ", solutions.len
+      for solution in solutions:
+        echo solution, " = 10"
     of "":
       discard
     else:
