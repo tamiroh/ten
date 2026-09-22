@@ -18,4 +18,4 @@ func evaluateAnswer*(input: string, digits: array[4, int]): Rational[int] =
   for count in remaining:
     if count != 0:
       raise newException(ValueError, "Use all four digits exactly once.")
-  return evaluate(input)
+  return evaluate(input, allowUnary = false)

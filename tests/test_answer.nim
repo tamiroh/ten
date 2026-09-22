@@ -26,3 +26,9 @@ suite "Answer evaluation":
   test "division by zero is recoverable":
     expect ValueError:
       discard evaluateAnswer("1 / (2 - 2) + 3", [1, 2, 2, 3])
+
+  test "unary signs are not accepted in puzzle answers":
+    for input in ["-1+2+3+6", "+1+2+3+6", "1--2+3+6",
+        "1+(-2)+3+6"]:
+      expect ValueError:
+        discard evaluateAnswer(input, [1, 2, 3, 6])

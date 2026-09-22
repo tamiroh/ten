@@ -20,7 +20,7 @@ proc main() =
   randomize()
   echo "10 puzzle"
   echo "Use all four digits exactly once with + - * / and parentheses to make 10."
-  echo "No concatenation. Every puzzle has a solution."
+  echo "No concatenation or unary signs. Every puzzle has a solution."
   echo "answers: show all solutions / next: skip / quit: exit"
   var puzzle = newPuzzle()
   showPuzzle(puzzle.digits)
