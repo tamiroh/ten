@@ -1,5 +1,5 @@
 import std/[random, rationals, strutils]
-import ten/answer
+import ten/[answer, prompt]
 
 proc newPuzzle(): array[4, int] =
   for digit in result.mitems:
@@ -16,10 +16,8 @@ proc main() =
   var digits = newPuzzle()
   showPuzzle(digits)
   while true:
-    stdout.write("> ")
-    stdout.flushFile()
     var line: string
-    if not stdin.readLine(line):
+    if not readPrompt(line):
       echo ""
       break
     case line.strip.toLowerAscii
