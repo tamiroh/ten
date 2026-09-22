@@ -1,3 +1,5 @@
+{.experimental: "notnil".}
+
 type
   Operator* = enum
     opAdd = "+"
@@ -8,7 +10,9 @@ type
   ExpressionKind = enum
     literalExpression, binaryExpression
 
-  Expression* = ref object
+  Expression* = ref ExpressionNode not nil
+
+  ExpressionNode = object
     case kind: ExpressionKind
     of literalExpression:
       number: int
@@ -20,8 +24,6 @@ func literal*(number: int): Expression =
   Expression(kind: literalExpression, number: number)
 
 func combine*(left, right: Expression, operator: Operator): Expression =
-  if left == nil or right == nil:
-    raise newException(ValueError, "Both operands are required.")
   return Expression(kind: binaryExpression, operator: operator, left: left, right: right)
 
 func appendExpression(expression: Expression, text: var string) =

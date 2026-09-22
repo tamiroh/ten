@@ -24,8 +24,11 @@ suite "Arithmetic expressions":
     expect ValueError:
       discard evaluate(division.toString())
 
-  test "missing operands are rejected":
-    expect ValueError:
-      discard combine(nil, literal(1), opAdd)
-    expect ValueError:
-      discard combine(literal(1), nil, opAdd)
+  test "nil expressions are rejected at compile time":
+    static:
+      doAssert not compiles(combine(nil, literal(1), opAdd))
+      doAssert not compiles(combine(literal(1), nil, opAdd))
+      doAssert not compiles(toString(nil))
+      doAssert not compiles(block:
+        let expression: Expression = nil
+        discard expression)
