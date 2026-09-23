@@ -1,7 +1,17 @@
-import std/[rationals, unittest]
+import std/[hashes, rationals, sets, unittest]
 import ../src/ten/[calculator, expression]
 
 suite "Arithmetic expressions":
+  test "equality and hashing compare structure rather than identity or value":
+    let first = combine(literal(1), literal(2), opAdd)
+    let second = combine(literal(1), literal(2), opAdd)
+    check first == second
+    check hash(first) == hash(second)
+    check first != combine(literal(2), literal(1), opAdd)
+    check first != combine(literal(1), literal(2), opMultiply)
+    check first != literal(3)
+    check @[first, second].toHashSet.len == 1
+
   test "literals are independent of puzzle rules":
     check literal(42).toString() == "42"
     check literal(-7).toString() == "-7"

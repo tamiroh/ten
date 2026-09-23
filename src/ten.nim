@@ -1,9 +1,9 @@
-import std/[random, rationals, strutils]
-import ten/[answer, prompt, solver]
+import std/[algorithm, random, rationals, sequtils, strutils]
+import ten/[answer, expression, prompt, solver]
 
 type Puzzle = object
   digits: array[4, int]
-  solutions: seq[string]
+  solutions: seq[Expression]
 
 proc newPuzzle(): Puzzle =
   while true:
@@ -37,7 +37,7 @@ proc main() =
       showPuzzle(puzzle.digits)
     of "answers", "a":
       echo "Solutions: ", puzzle.solutions.len
-      for solution in puzzle.solutions:
+      for solution in puzzle.solutions.mapIt(it.toString()).sorted:
         echo solution, " = 10"
     of "":
       discard

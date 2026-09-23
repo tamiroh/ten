@@ -1,5 +1,7 @@
 {.experimental: "notnil".}
 
+import std/hashes
+
 type
   Operator* = enum
     opAdd = "+"
@@ -25,6 +27,27 @@ func literal*(number: int): Expression =
 
 func combine*(left, right: Expression, operator: Operator): Expression =
   return Expression(kind: binaryExpression, operator: operator, left: left, right: right)
+
+func `==`*(left, right: Expression): bool =
+  if left.kind != right.kind:
+    return false
+  case left.kind
+  of literalExpression:
+    return left.number == right.number
+  of binaryExpression:
+    return left.operator == right.operator and left.left == right.left and
+      left.right == right.right
+
+func hash*(expression: Expression): Hash =
+  result = hash(expression.kind)
+  case expression.kind
+  of literalExpression:
+    result = result !& hash(expression.number)
+  of binaryExpression:
+    result = result !& hash(expression.operator)
+    result = result !& hash(expression.left)
+    result = result !& hash(expression.right)
+  result = !$result
 
 func appendExpression(expression: Expression, text: var string) =
   case expression.kind

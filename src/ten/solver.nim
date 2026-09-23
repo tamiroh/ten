@@ -1,4 +1,4 @@
-import std/[algorithm, rationals, sets]
+import std/[rationals, sets]
 import expression
 
 type Candidate = object
@@ -12,10 +12,10 @@ func calculate(left, right: Rational[int], operator: Operator): Rational[int] =
   of opMultiply: return left * right
   of opDivide: return left / right
 
-func findSolutions*(digits: array[4, int]): seq[string] =
-  ## Return all distinct, fully parenthesized binary arithmetic expressions
+func findSolutions*(digits: array[4, int]): seq[Expression] =
+  ## Return all structurally distinct binary arithmetic expressions
   ## that use the supplied digits exactly once and evaluate to 10.
-  ## Results are sorted. Operand orders and parenthesizations remain distinct.
+  ## Operand orders and parenthesizations remain distinct.
   # Cache intermediate values for the search, separately from expression trees.
   var expressions: array[16, seq[Candidate]]
   for index, digit in digits:
@@ -40,9 +40,7 @@ func findSolutions*(digits: array[4, int]): seq[string] =
               expression: combine(left.expression, right.expression, operator), value: value))
       leftSubset = (leftSubset - 1) and subset
 
-  var solutions: HashSet[string]
+  var solutions = initHashSet[Expression]()
   for candidate in expressions[15]:
-    solutions.incl(candidate.expression.toString())
-  for solution in solutions:
-    result.add(solution)
-  result.sort()
+    if not solutions.containsOrIncl(candidate.expression):
+      result.add(candidate.expression)
