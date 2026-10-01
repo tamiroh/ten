@@ -1,5 +1,7 @@
 # ten
 
+A CLI 10 puzzle game.
+
 ## Install
 
 Requires Nim 2.2.12 or later.
