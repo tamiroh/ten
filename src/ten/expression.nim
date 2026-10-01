@@ -28,6 +28,21 @@ func literal*(number: int): Expression =
 func combine*(left, right: Expression, operator: Operator): Expression =
   return Expression(kind: binaryExpression, operator: operator, left: left, right: right)
 
+func isLiteral*(expression: Expression): bool =
+  expression.kind == literalExpression
+
+func number*(expression: Expression): int =
+  expression.number
+
+func operator*(expression: Expression): Operator =
+  expression.operator
+
+func left*(expression: Expression): Expression =
+  expression.left
+
+func right*(expression: Expression): Expression =
+  expression.right
+
 func `==`*(left, right: Expression): bool =
   if cast[pointer](left) == cast[pointer](right):
     return true

@@ -1,5 +1,5 @@
 import std/[algorithm, random, rationals, sequtils, strutils]
-import ten/[answer, expression, prompt, solver]
+import ten/[answer, difficulty, expression, prompt, solver]
 
 type Puzzle = object
   digits: array[4, int]
@@ -13,8 +13,9 @@ proc newPuzzle(): Puzzle =
     if result.solutions.len > 0:
       return
 
-proc showPuzzle(digits: array[4, int]) =
-  echo "\nDigits: ", digits.join(" ")
+proc showPuzzle(puzzle: Puzzle) =
+  echo "\nDigits: ", puzzle.digits.join(" ")
+  echo "Difficulty: ", difficulty(puzzle.solutions).level
 
 proc main() =
   randomize()
@@ -23,7 +24,7 @@ proc main() =
   echo "No concatenation or unary signs. Every puzzle has a solution."
   echo "answers: show all solutions / next: skip / quit: exit"
   var puzzle = newPuzzle()
-  showPuzzle(puzzle.digits)
+  showPuzzle(puzzle)
   while true:
     var line: string
     if not readPrompt(line):
@@ -34,7 +35,7 @@ proc main() =
       break
     of "next", "n":
       puzzle = newPuzzle()
-      showPuzzle(puzzle.digits)
+      showPuzzle(puzzle)
     of "answers", "a":
       echo "Solutions: ", puzzle.solutions.len
       for solution in puzzle.solutions.mapIt($it).sorted:
@@ -47,7 +48,7 @@ proc main() =
         if value == 10 // 1:
           echo "Correct!"
           puzzle = newPuzzle()
-          showPuzzle(puzzle.digits)
+          showPuzzle(puzzle)
         else:
           echo "Result: ", (if value.den == 1: $value.num else: $value), ". Try again!"
       except ValueError as error:
