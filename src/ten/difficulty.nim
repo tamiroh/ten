@@ -102,3 +102,9 @@ func level*(difficulty: float): Level =
   elif difficulty < 1: levelNormal
   elif difficulty < 7: levelHard
   else: levelExpert
+
+func parseLevel*(name: string): Level =
+  for level in Level:
+    if cmpIgnoreCase(name, $level) == 0:
+      return level
+  raise newException(ValueError, "Unknown level. Choose easy, normal, hard or expert.")

@@ -27,5 +27,6 @@ For example, with `1 2 3 4`, enter `1+2+3+4`.
 
 - `next`: Skip to the next puzzle.
 - `answers` / `a`: Show all solutions for the current puzzle.
+- `level <name>` / `l <name>`: Change the level to `easy`, `normal` (default), `hard` or `expert` and start a new puzzle. `level` alone shows the current level.
 - `quit`: Exit.
 - Up / Down: Browse input history from the current session.

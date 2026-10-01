@@ -32,6 +32,12 @@ suite "Puzzle difficulty":
     for digits in [[1, 1, 5, 8], [1, 1, 9, 9], [1, 3, 3, 7], [3, 4, 7, 8]]:
       check difficulty(findSolutions(digits)).level == levelExpert
 
+  test "levels are parsed regardless of case":
+    check parseLevel("hard") == levelHard
+    check parseLevel("Expert") == levelExpert
+    expect ValueError:
+      discard parseLevel("impossible")
+
   test "puzzles without solutions are rejected":
     expect ValueError:
       discard difficulty(findSolutions([1, 1, 1, 1]))
