@@ -37,7 +37,7 @@ proc main() =
       showPuzzle(puzzle.digits)
     of "answers", "a":
       echo "Solutions: ", puzzle.solutions.len
-      for solution in puzzle.solutions.mapIt(it.toString()).sorted:
+      for solution in puzzle.solutions.mapIt($it).sorted:
         echo solution, " = 10"
     of "":
       discard

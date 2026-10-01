@@ -29,6 +29,8 @@ func combine*(left, right: Expression, operator: Operator): Expression =
   return Expression(kind: binaryExpression, operator: operator, left: left, right: right)
 
 func `==`*(left, right: Expression): bool =
+  if cast[pointer](left) == cast[pointer](right):
+    return true
   if left.kind != right.kind:
     return false
   case left.kind
@@ -60,6 +62,6 @@ func appendExpression(expression: Expression, text: var string) =
     expression.right.appendExpression(text)
     text.add(')')
 
-func toString*(expression: Expression): string =
+func `$`*(expression: Expression): string =
   ## Render the recursive expression as a fully parenthesized string.
   expression.appendExpression(result)
