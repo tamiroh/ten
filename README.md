@@ -1,5 +1,15 @@
 # ten
 
+## Install
+
+Requires Nim 2.2.12 or later.
+
+```sh
+nimble install https://github.com/tamiroh/ten
+```
+
+Make sure `~/.nimble/bin` is in your `PATH`, then run `ten`.
+
 ## How to play
 
 ```sh
